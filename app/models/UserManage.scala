@@ -2,23 +2,30 @@ package models
 import java.util.Date
 import javax.inject.Inject
 import anorm.SqlParser
-import anorm
+import anorm._
 
 import play.api.db.DBApi
-case class UserManage(Id:Option[Long],
-                       UserName: String,
-                       Password: String,
-                       ConfigPost: String,
-                       ConfigPort: String,
-                       ConfigUserName: String,
-                       ConfigPassword: String,
-                       IsAdmini: Boolean,
-                       Remark: String)
+case class UserManage(UserName: String,
+                       Password: String)
 @javax.inject.Singleton
-class UserManage @Inject()(dbapi:DBApi, companyService: CompanyService){
-  private val db = dbapi.database("default")
-  val simple = {
+class UserManageService @Inject()(dbapi:DBApi) {
 
+  private val db = dbapi.database("default")
+
+
+  def insert(userManage: UserManage) = {
+    db.withConnection { implicit connection =>
+      SQL(
+        """
+          insert into usermanage values (
+            {username}, {password}
+          )
+        """
+      ).on(
+        'username -> userManage.UserName,
+        'password -> userManage.Password
+      ).executeUpdate()
+    }
   }
 
 }

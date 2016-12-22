@@ -1,6 +1,7 @@
 package controllers
 
 import javax.inject._
+import models.{UserManage, UserManageService}
 import play.api._
 import play.api.libs.json
 import play.api.mvc._
@@ -9,10 +10,11 @@ import play.api.libs.functional.syntax._
  * Created by Administrator on 2016/12/21.
  */
 @Singleton
-class ApiController  @Inject() extends Controller{
+class ApiController  @Inject() (userManageService: UserManageService)extends Controller{
   def login = Action {request =>
     var userName : String = request.body.asFormUrlEncoded.get("userName")(0)
     var password : String = request.body.asFormUrlEncoded.get("password")(0)
+
 
     //var json = request.body.asJson
     //var userName = (json / "userName").get
@@ -26,5 +28,10 @@ class ApiController  @Inject() extends Controller{
   }
   def mainmenu = Action {
     Ok(views.html.mainmenu("aaaa"))
+  }
+
+  def test = Action {request =>
+    userManageService.insert(UserManage("aaa", "bbb"))
+    Ok("error")
   }
 }
