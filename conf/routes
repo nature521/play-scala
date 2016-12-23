@@ -16,7 +16,7 @@ GET     /mainmenu                   controllers.ApiController.mainmenu
 
 POST    /api/login                  controllers.ApiController.login
 GET     /api/test                   controllers.ApiController.test
-
-
+GET     /usermanage                 controllers.ApiController.usermanage
+POST    /usermanage/add_user        controllers.ApiController.addUser
 
 
