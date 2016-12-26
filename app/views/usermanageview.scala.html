@@ -1,5 +1,4 @@
-@(title: String)(content: Html)
-
+@(title:String)(content:Html)(userAndCongigs : List[(Config, User)])
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,7 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="../../favicon.ico">
-
+        <script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.10.2.min.js")"></script>
         <title>用户管理</title>
             <!-- Bootstrap core CSS -->
         <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
@@ -18,20 +17,19 @@
       <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-        <script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.10.2.min.js")"></script>
         <script type="text/javascript">
-            function add_user(){
+  	  function add_user(){
                     $.ajax({
                     url : '/usermanage/add_user',
-                    type : 'post'
+                    type : 'POST',
                     data :{
-                        userName : $('#user_name').val(),
-                        password : $('#password').val(),
-                        configPost : $('#config_post').val(),
-                        configPort : $('#config_port').val(),
-                        configName : $('#config_name').val(),
-                        configPassword : $('#config_password').val(),
-                        isAdmini : $('#is_admini').val()
+                        "userName" : $('#user_name').val(),
+                        "password" : $('#password').val(),
+                        "configPost" : $('#config_post').val(),
+                        "configPort" : $('#config_port').val(),
+                        "configName" : $('#config_name').val(),
+                        "configPassword" : $('#config_password').val(),
+                        "isAdmini" : $('input[name="optionsRadios"]:checked').val()
                     },
                     success: function(){
                         alert("插入成功！")
@@ -41,6 +39,7 @@
                     }
                 });
             }
+
         </script>
     </head>
     <body>
@@ -94,88 +93,21 @@
                                     <td><input type="text" id="config_port"/></td>
                                     <td><input type="text" id="config_name"/></td>
                                     <td><input type="text" id="config_password"/></td>
-                                    <td><input type="text" id="is_admini"/></td>
+                                    <td>
+                                        <div id="is_admini" class="radio">
+                                            <label>
+                                                <input type="radio" name="optionsRadios" id="config_isAdmini1" value="true"/>是
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="optionsRadios" id="config_isAdmini2" value="fasle" checked/>否
+                                            </label>
+                                        </div>
+                                    </td>
 
                                     <td><button type="button" id="add_user"  class="btn btn-primary"  onclick="add_user()">添加</button></td>
                                 </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">修改</button></td>
-                                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">删除</button></td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                    <td><button type="button" class="btn btn-default">修改</button></td>
-                                    <td><button type="button" class="btn btn-default">删除</button></td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                    <td><button type="button" class="btn btn-default">修改</button></td>
-                                    <td><button type="button" class="btn btn-default">删除</button></td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>wglxy</td>
-                                    <td>123456</td>
-                                    <td>114.242.126.42</td>
-                                    <td>350</td>
-                                    <td>wncl</td>
-                                    <td>www2730826</td>
-                                </tr>
+
+
                             </tbody>
                         </table>
                     </div>

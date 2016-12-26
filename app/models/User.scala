@@ -7,19 +7,26 @@ import scala._
 import anorm.SqlParser._
 import play.api.db.DBApi
 case class User(UserName: String,
-                       Password: String)
+                Password: String,
+                Boolean: Boolean)
 
 
 @javax.inject.Singleton
 class UserService @Inject()(dbapi:DBApi) {
 
   private val db = dbapi.database("default")
-
+  val simple = {
+    get[String]("User.UserName") ~
+      get[String]("User.Password") ~
+      get[Boolean]("User.IsAdmini") map {
+      case userName~password~isAdmini => User(userName, password,isAdmini)
+    }
+  }
   def insert(user: User) = {
     db.withConnection { implicit connection =>
       SQL(
         """
-          insert into User values (
+          insert into UserManage values (
             {username}, {password}
           )
         """
@@ -34,7 +41,7 @@ class UserService @Inject()(dbapi:DBApi) {
     var count : Long = 0
 
     db.withConnection{ implicit connection =>
-       count = SQL("select count(*) from UserManage" +
+      count = SQL("select count(*) from UserManage" +
         " where UserName = {UserName} " +
         "and Password = {Password}").on(
         'UserName -> userName,
@@ -44,9 +51,4 @@ class UserService @Inject()(dbapi:DBApi) {
     count
   }
 }
-// -- Parsers
-/**
- * Parse a Computer from a ResultSet
- */
-
-
+// -
