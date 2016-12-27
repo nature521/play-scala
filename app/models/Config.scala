@@ -9,7 +9,7 @@ import play.api.db.DBApi
  * Created by Administrator on 2016/12/23.
  */
 @javax.inject.Singleton
-case class Config(UserName: String, ConfigPost: String, ConfigPort: Int, ConfigName: String, ConfigPassword: String)
+case class Config(UserId: Long, ConfigPost: String, ConfigPort: Int, ConfigName: String, ConfigPassword: String)
 case class  UserWithConfig(UserName: String, Password: String, IsAdmini: Boolean,
                            ConfigPost : String, configPort : Int,
                            ConfigName :String, configPassword :String)
@@ -25,13 +25,13 @@ case class Page[A](items:Seq[A], page:Int, offset: Long, total: Long){
 class ConfigService @Inject()(dbapi: DBApi, userService: UserService) {
   private val db = dbapi.database("default")
   val simple = {
-    get[String]("Config.UserName") ~
+    get[Long]("Config.UserId") ~
       get[String]("Config.ConfigPost") ~
       get[Int]("Config.ConfigPort") ~
       get[String]("Config.ConfigName") ~
       get[String]("Config.ConfigPassword")  map{
-      case username~configPost~configPort~configName~configPassword =>
-        Config(username, configPost, configPort, configName, configPassword)
+      case userid~configPost~configPort~configName~configPassword =>
+        Config(userid, configPost, configPort, configName, configPassword)
     }
   }
   val userWithConfigSim = simple ~ (userService.simple ) map{
@@ -40,9 +40,9 @@ class ConfigService @Inject()(dbapi: DBApi, userService: UserService) {
 
   def insert(config : Config) = {
     db.withConnection { implicit connection =>
-      SQL("insert into Config values ( {username},{configpost},{configport},{configname},{configpassword})"
+      SQL("insert into Config values ( {userid},{configpost},{configport},{configname},{configpassword})"
       ).on(
-        'username -> config.UserName,
+        'userid -> config.UserId,
         'configpost -> config.ConfigPost,
         'configport -> config.ConfigPort,
         'configname -> config.ConfigName,
@@ -51,13 +51,36 @@ class ConfigService @Inject()(dbapi: DBApi, userService: UserService) {
     }
   }
   def getAll()= {
-      db.withConnection { implicit connection =>
-        val result = SQL(
-          """
-             select * from Config Full join UserManage on config.UserName = UserManage.UserName
-          """
-        ).as(userWithConfigSim *)
-        result
-      }
+    db.withConnection { implicit connection =>
+      val result = SQL(
+        """
+          select
+          c.id [Config.Id], c.UserId [Config.UserId],
+          c.ConfigPost [Config.ConfigPost],c.ConfigPort [Config.ConfigPort],
+          c.ConfigName [Config.ConfigName],c.ConfigPassword [Config.ConfigPassword],
+          u.UserName [User.UserName], u.Password [User.Password], u.IsAdmini [User.IsAdmini]
+          from Config as c join UserManage as u on c.UserId = u.Id
+      """
+      ).as(userWithConfigSim *)
+      result
+    }
   }
+
+  def getConfigsByUser(userId : Long)= {
+    db.withConnection{ implicit connection =>
+      val result = SQL(
+      """
+         select
+         c.id [Config.Id], c.UserId [Config.UserId],
+         c.ConfigPost [Config.ConfigPost],c.ConfigPort [Config.ConfigPort],
+         c.ConfigName [Config.ConfigName],c.ConfigPassword [Config.ConfigPassword]
+         from Config as c join UserManage as u on c.UserId = {UserId}
+      """
+      ).on(
+        'UserId -> userId
+      ).as(simple *)
+      result
+    }
+  }
+
 }

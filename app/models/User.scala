@@ -8,7 +8,7 @@ import anorm.SqlParser._
 import play.api.db.DBApi
 case class User(UserName: String,
                 Password: String,
-                Boolean: Boolean)
+                IsAdmini: Boolean)
 
 
 @javax.inject.Singleton
@@ -27,23 +27,54 @@ class UserService @Inject()(dbapi:DBApi) {
       SQL(
         """
           insert into UserManage values (
-            {username}, {password}
+            {username}, {password},{isadmini}
           )
         """
       ).on(
         'username -> user.UserName,
-        'password -> user.Password
+        'password -> user.Password,
+        'isadmini -> user.IsAdmini
       ).executeUpdate()
     }
   }
+  def finIdByUserName(userName : String) = {
+    var userId : Long = 0
+    db.withConnection { implicit connection =>
+      userId =  SQL(
+        """
+          select Id from UserManage where UserName = {UserName}
+        """
+      ).on(
+      'UserName -> userName
+      ).as(scalar[Long].single)
+      userId
+    }
+  }
   //val Int = SQL("SELECT * FROM test").as((int("id") <~ str("val")).single)
+  def  findUserName(userName: String) = {
+    var count : Long = 0
+
+    db.withConnection{ implicit connection =>
+      count = SQL(
+        """select count(*) from UserManage
+        where UserName = {UserName}
+        """
+       ).on(
+        'UserName -> userName
+      ).as(scalar[Long].single)
+    }
+    count
+  }
+
   def  findUser(userName: String, password: String) = {
     var count : Long = 0
 
     db.withConnection{ implicit connection =>
-      count = SQL("select count(*) from UserManage" +
-        " where UserName = {UserName} " +
-        "and Password = {Password}").on(
+      count = SQL(
+        """select count(*) from UserManage
+        where UserName = {UserName} and Password = {Password}
+        """
+      ).on(
         'UserName -> userName,
         'Password -> password
       ).as(scalar[Long].single)
