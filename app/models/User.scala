@@ -6,22 +6,29 @@ import anorm._
 import scala._
 import anorm.SqlParser._
 import play.api.db.DBApi
-case class User(UserName: String,
-                Password: String,
-                IsAdmini: Boolean)
 
+case class User(Id: Option[Long] = None, UserName: String, Password: String, IsAdmini: Boolean)
 
 @javax.inject.Singleton
-class UserService @Inject()(dbapi:DBApi) {
+class UserService @Inject()(dbapi: DBApi) {
 
   private val db = dbapi.database("default")
-  val simple = {
-    get[String]("User.UserName") ~
-      get[String]("User.Password") ~
-      get[Boolean]("User.IsAdmini") map {
-      case userName~password~isAdmini => User(userName, password,isAdmini)
+
+  def list = {
+    db.withConnection { implicit connection =>
+      SQL("select * from UserManage").as(simple *)
     }
   }
+
+  val simple = {
+    get[Option[Long]]("Id") ~
+    get[String]("UserName") ~
+      get[String]("Password") ~
+      get[Boolean]("IsAdmini") map {
+      case id~userName~password~isAdmini => User(id, userName, password, isAdmini)
+    }
+  }
+
   def insert(user: User) = {
     db.withConnection { implicit connection =>
       SQL(
@@ -37,10 +44,19 @@ class UserService @Inject()(dbapi:DBApi) {
       ).executeUpdate()
     }
   }
+
+  def delete(userId: Long) = {
+    db.withConnection { implicit connection =>
+      SQL("delete from UserManage where Id = {userId}").on(
+        'userId -> userId
+      ).executeUpdate()
+    }
+  }
+
   def finIdByUserName(userName : String) = {
     var userId : Long = 0
     db.withConnection { implicit connection =>
-      userId =  SQL(
+      userId = SQL(
         """
           select Id from UserManage where UserName = {UserName}
         """
@@ -66,20 +82,16 @@ class UserService @Inject()(dbapi:DBApi) {
     count
   }
 
-  def  findUser(userName: String, password: String) = {
-    var count : Long = 0
-
+  def findUser(userName: String, password: String) = {
     db.withConnection{ implicit connection =>
-      count = SQL(
-        """select count(*) from UserManage
+      SQL(
+        """select * from UserManage
         where UserName = {UserName} and Password = {Password}
         """
       ).on(
         'UserName -> userName,
         'Password -> password
-      ).as(scalar[Long].single)
+      ).as(simple *)
     }
-    count
   }
 }
-// -

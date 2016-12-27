@@ -1,4 +1,4 @@
-@(configList : List[(Config)])
+@(users: List[User])
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,9 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" href="../../favicon.ico">
         <script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.10.2.min.js")"></script>
-        <title>配置管理</title>
+        <title>用户管理</title>
             <!-- Bootstrap core CSS -->
         <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
             <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -17,29 +16,46 @@
       <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-        <script type="text/javascript">
-  	  function add_config(){
-                    $.ajax({
-                    url : '/configmanage/add_config',
+      <script type="text/javascript">
+        function add_user(){
+            $.ajax({
+                    url : '/user/add',
                     type : 'POST',
                     data :{
-                        "configPost" : $('#config_post').val(),
-                        "configPort" : $('#config_port').val(),
-                        "configName" : $('#config_name').val(),
-                        "configPassword" : $('#config_password').val(),
+                        "username" : $('#user_name').val(),
+                        "password" : $('#password').val(),
+                        "isAdmini" : $('input[name="optionsRadios"]:checked').val()
                     },
                     success: function(){
                         alert("插入成功！")
+                        location.reload();
                     },
                     error:function(error){
-                        alert("插入失败！")
+                        if(error = 900){
+                            alert("用户名重复，请重新输入新的用户名")
+                        }else{
+                            alert("插入失败！")
+                        }
+
                     }
                 });
             }
+        function del_user(userId) {
+            $.ajax({
+                    url : '/user/del/' + userId,
+                    type : 'DELETE',
+                    success: function(){
+                        alert("删除成功！");
+                        location.reload();
+                    },
+                    error:function(error){
+                       alert("删除失败！")
+                    }
+                });
+        }
         </script>
     </head>
     <body>
-
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -49,53 +65,61 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">配置管理</a>
+                    <a class="navbar-brand" href="#">用户管理</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">用户管理</a></li>
+                        <li><a href="#">配置信息</a></li>
                         <li><a href="#">数据导入提取导出</a></li>
                     </ul>
-                    <form class="navbar-form navbar-right">
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </form>
                 </div>
             </div>
         </nav>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div class="col-sm-9 col-md-10 col-md-offset-1 main">
                     <h2 class="sub-header">Section title</h2>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>服务器地址</th>
-                                    <th>端口号</th>
-                                    <th>配置用户名</th>
-                                    <th>配置密码</th>
+                                    <th>用户名</th>
+                                    <th>密码</th>
+                                    <th>是否管理员</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="text" id="config_post"/></td>
-                                    <td><input type="text" id="config_port"/></td>
-                                    <td><input type="text" id="config_name"/></td>
-                                    <td><input type="text" id="config_password"/></td>
+                                    <td><input type="text" id="user_name"/></td>
+                                    <td><input type="text" id="password"/></td>
+                                    <td>
+                                        <div id="is_admini" class="radio">
+                                            <label>
+                                                <input type="radio" name="optionsRadios" id="config_isAdmini1" value="true"/>
+                                                是
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="optionsRadios" id="config_isAdmini2" value="fasle" checked/>
+                                                否
+                                            </label>
+                                        </div>
+                                    </td>
 
-                                    <td><button type="button" id="add_user"  class="btn btn-primary"  onclick="add_config()">添加</button></td>
+                                    <td><button type="button" id="add_user" class="btn btn-primary" onclick="add_user()">添加</button></td>
                                 </tr>
 
                             </tbody>
                             <tbody>
-                            @for(config <- configList){
+                            @for(user <- users) {
                                 <tr>
-                                    <td>@config.ConfigPost</td>
-                                    <td>@config.ConfigPort</td>
-                                    <td>@config.ConfigName</td>
-                                    <td>@config.ConfigPassword</td>
-                                    <td><button type="button" id="delete" class="btn btn-primary" >删除</button></td>
+                                    <td>@user.UserName</td>
+                                    <td>@user.Password</td>
+                                    <td>@user.IsAdmini</td>
+                                    <td>
+                                        <button type="button" id="del" class="btn btn-primary" onclick="del_user('@user.Id')">删除</button>
+                                        <button type="button" id="view" class="btn btn-primary" onclick="view_config()">查看配置</button>
+                                    </td>
                                 </tr>
                             }
                             </tbody>

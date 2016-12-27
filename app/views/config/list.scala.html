@@ -1,4 +1,4 @@
-@(userAndCongigs : List[(Config, User)])
+@(configList : List[(Config)])
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,47 +9,33 @@
         <meta name="author" content="">
         <link rel="icon" href="../../favicon.ico">
         <script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.10.2.min.js")"></script>
-        <title>用户管理</title>
+        <title>配置管理</title>
             <!-- Bootstrap core CSS -->
-        <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
+        <link href="@routes.Assets.versioned("../../../public/stylesheets/bootstrap.min.css")" rel="stylesheet">
             <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
             <!--[if lt IE 9]>
       <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
         <script type="text/javascript">
-  	  function add_user(){
+  	  function add_config(){
                     $.ajax({
-                    url : '/usermanage/add_user',
+                    url : '/configmanage/add_config',
                     type : 'POST',
                     data :{
-                        "userName" : $('#user_name').val(),
-                        "password" : $('#password').val(),
                         "configPost" : $('#config_post').val(),
                         "configPort" : $('#config_port').val(),
                         "configName" : $('#config_name').val(),
                         "configPassword" : $('#config_password').val(),
-                        "isAdmini" : $('input[name="optionsRadios"]:checked').val()
                     },
                     success: function(){
                         alert("插入成功！")
                     },
                     error:function(error){
-                        if(error = 900){
-                            alert("用户名重复，请重新输入新的用户名")
-                        }else{
-                            alert("插入失败！")
-                        }
-
+                        alert("插入失败！")
                     }
                 });
             }
-       function delete(){
-            $.ajax({
-
-
-            })
-       }
         </script>
     </head>
     <body>
@@ -63,11 +49,11 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">用户管理</a>
+                    <a class="navbar-brand" href="#">配置管理</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">配置信息</a></li>
+                        <li><a href="#">用户管理</a></li>
                         <li><a href="#">数据导入提取导出</a></li>
                     </ul>
                     <form class="navbar-form navbar-right">
@@ -84,55 +70,34 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>用户名</th>
-                                    <th>密码</th>
                                     <th>服务器地址</th>
                                     <th>端口号</th>
                                     <th>配置用户名</th>
                                     <th>配置密码</th>
-                                    <th>是否管理员</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                        <td><input type="text" id="user_name"/></td>
-                                        <td><input type="text" id="password"/></td>
-                                        <td><input type="text" id="config_post"/></td>
-                                        <td><input type="text" id="config_port"/></td>
-                                        <td><input type="text" id="config_name"/></td>
-                                        <td><input type="text" id="config_password"/></td>
+                                    <td><input type="text" id="config_post"/></td>
+                                    <td><input type="text" id="config_port"/></td>
+                                    <td><input type="text" id="config_name"/></td>
+                                    <td><input type="text" id="config_password"/></td>
 
-                                    <td>
-                                        <div id="is_admini" class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="config_isAdmini1" value="true"/>是
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="config_isAdmini2" value="fasle" checked/>否
-                                            </label>
-                                        </div>
-                                    </td>
-
-                                    <td><button type="button" id="add_user"  class="btn btn-primary"  onclick="add_user()">添加</button></td>
+                                    <td><button type="button" id="add_user"  class="btn btn-primary"  onclick="add_config()">添加</button></td>
                                 </tr>
 
                             </tbody>
                             <tbody>
-                                @for(userAndConfig <- userAndCongigs){
-                                    <tr>
-                                        <td>@userAndConfig.x._2.UserName</td>
-                                        <td>@userAndConfig.x._2.Password</td>
-                                        <td>@userAndConfig.x._1.ConfigPost</td>
-                                        <td>@userAndConfig.x._1.ConfigPort</td>
-                                        <td>@userAndConfig.x._1.ConfigName</td>
-                                        <td>@userAndConfig.x._1.ConfigPassword</td>
-                                        <td>@userAndConfig.x._2.IsAdmini</td>
-                                        <td><button type="button" id="delete" class="btn btn-primary" onclick="delete()">删除</button></td>
-                                    </tr>
-                                }
-
-
+                            @for(config <- configList){
+                                <tr>
+                                    <td>@config.ConfigPost</td>
+                                    <td>@config.ConfigPort</td>
+                                    <td>@config.ConfigName</td>
+                                    <td>@config.ConfigPassword</td>
+                                    <td><button type="button" id="delete" class="btn btn-primary" >删除</button></td>
+                                </tr>
+                            }
                             </tbody>
                         </table>
                     </div>

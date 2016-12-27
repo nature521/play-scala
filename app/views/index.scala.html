@@ -1,22 +1,55 @@
-@*
- * This template takes a single argument, a String containing a
- * message to display.
- *@
-@(message: String)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../../favicon.ico">
+        <script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.10.2.min.js")"></script>
+        <title>客票信息系统</title>
+            <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
+            <!-- Custom styles for this template -->
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/signin.css")">
+            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 
-@*
- * Call the `main` template with two arguments. The first
- * argument is a `String` with the title of the page, the second
- * argument is an `Html` object containing the body of the page.
- *@
-@signin("Welcome to Play") {
+        <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
 
-    @*
-     * Get an `Html` object by calling the built-in Play welcome
-     * template and passing a `String` message.
-     *@
-    @play20.welcome(message, style = "Scala")
+        <script type="text/javascript">
+        function signin(){
+            var userName = $("#username_txt").val();
+            var password = $("#password_txt").val();
+            $.ajax({
+                url:'/api/login',
+                type:'POST',
+                data:{"username": userName,"password" : password},
+                success:function(){
+                        window.location = ('/menu')
+                },
+                error:function(){
+                    alert("等陆失败，用户名不存在或密码不正确！")
+                }
+            });
+        }
+      </script>
+    </head>
+    <body>
+        <div class="container">
 
-}
-
-
+            <form class="form-signin" role="form">
+                <h2 class="form-signin-heading">请登陆</h2>
+                <input id="username_txt" type="email" class="form-control" placeholder="用户名" required autofocus>
+                <input id="password_txt" type="password" class="form-control" placeholder="密码" required>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" value="remember-me"> 记住密码
+                    </label>
+                </div>
+                <button id="signin_btn"  class="btn btn-lg btn-primary btn-block"  onclick="signin()">登陆</button>
+            </form>
+        </div> <!-- /container -->
+    </body>
+</html>

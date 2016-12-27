@@ -1,24 +1,26 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
-# ~~~~
-
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
-GET     /mainmenu                   controllers.ApiController.mainmenu
+GET     /                           controllers.HomeController.index
+GET     /menu                       controllers.HomeController.menu
 
+# 用户模块
+GET     /user                       controllers.UserController.listUser
+POST    /user/add                   controllers.UserController.addUser
+DELETE  /user/del/:userId           controllers.UserController.delUser(userId: Long)
+
+# 配置模块
+POST    /config/add                 controllers.ApiController.addConfig
+POST    /config/:id                 controllers.ApiController.getConfigsByUser(id: Long)
+
+# 通用接口
 POST    /api/login                  controllers.ApiController.login
 GET     /api/test                   controllers.ApiController.test
-GET     /usermanage                 controllers.ApiController.getAllUserAndConfigs
-POST    /usermanage/add_user        controllers.ApiController.addUser
-POST    /configmanage/add_config    controllers.ApiController.addConfig
-POST    /configmanage               controllers.ApiController.getConfigsByUser
+
+
+
 
 
