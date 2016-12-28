@@ -1,4 +1,4 @@
-@(configList : List[(Config)])
+@(configList : List[(Config)])(userId : Long)
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,9 +18,9 @@
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
         <script type="text/javascript">
-        function add_config(){
+        function add_config(userId){
             $.ajax({
-                url : '/config/add',
+                url : '/config/addByUId/' +  userId,
                 type : 'POST',
                 data :{
                     "configPost" : $('#config_post').val(),
@@ -37,7 +37,7 @@
                 }
             });
         }
-
+        
         function del_config(configId){
             $.ajax({
                 url : '/config/del/' + configId,
@@ -96,7 +96,7 @@
                                     <td><input type="text" id="config_port"/></td>
                                     <td><input type="text" id="config_name"/></td>
                                     <td><input type="text" id="config_password"/></td>
-                                    <td><button type="button" id="add_config"  class="btn btn-primary"  onclick="add_config()">添加</button></td>
+                                    <td><button type="button" id="add_config"  class="btn btn-primary"  onclick="add_config('@userId')">添加</button></td>
                                 </tr>
 
                             </tbody>

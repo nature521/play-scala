@@ -21,10 +21,12 @@ class UserController @Inject() (userService: UserService)extends Controller {
     val password: String = request.body.asFormUrlEncoded.get("password").head
     val isAdmin = request.body.asFormUrlEncoded.get("isAdmini").head
     if(userService.findUserName(userName).toString.toInt > 0){
-      Status(500)
+      Status(300)("用户名已经存在")
+    }else {
+      userService.insert(User(None, userName, password, isAdmin.equals("true")))
+      Ok("insertOk")
     }
-    userService.insert(User(None, userName, password, isAdmin.equals("true")))
-    Ok("insertOk")
+
   }
 
   def delUser(userId: Long) = Action { implicit request =>
