@@ -13,11 +13,11 @@ POST    /user/add                   controllers.UserController.addUser
 DELETE  /user/del/:userId           controllers.UserController.delUser(userId: Long)
 
 # 配置模块
-POST    /config/add                 controllers.ConfigController.addConfig
-POST    /config/addByUId/:userId    controllers.ConfigController.addConfigByUId(userId: Long)
-GET    /config/:userId              controllers.ConfigController.listConfig(userId: Long)
-GET    /configself                  controllers.ConfigController.listConfigSelf
-DELETE /config/del/:configId        controllers.ConfigController.delConfig(configId : Long)
+POST    /config/add                  controllers.ConfigController.addConfig
+POST    /config/addByUId/:userId     controllers.ConfigController.addConfigByUId(userId: Long)
+GET     /config/:userId              controllers.ConfigController.listConfig(userId: Long)
+GET     /configself                  controllers.ConfigController.listConfigSelf
+DELETE  /config/del/:configId        controllers.ConfigController.delConfig(configId : Long)
 
 
 

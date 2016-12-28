@@ -1,22 +1,6 @@
 @(users: List[User])
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <script type="text/javascript" src="@routes.Assets.versioned("javascripts/jquery-1.10.2.min.js")"></script>
-        <title>用户管理</title>
-            <!-- Bootstrap core CSS -->
-        <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
-            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-            <!--[if lt IE 9]>
-      <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-      <script type="text/javascript">
+@pagejs = {
+    <script type="text/javascript">
         function add_user(){
             $.ajax({
                     url : '/user/add',
@@ -59,86 +43,61 @@
         }
 
         </script>
-    </head>
-    <body>
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav ">
-                        <a class="navbar-brand" href="/user">用户管理</a>
-                        <li><a href="/configself">配置管理</a></li>
-                        <li><a href="#">数据导入提取导出</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-9 col-md-10 col-md-offset-1 main">
-                    <h2 class="sub-header">Section title</h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>用户名</th>
-                                    <th>密码</th>
-                                    <th>是否管理员</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="text" id="user_name"/></td>
-                                    <td><input type="text" id="password"/></td>
-                                    <td>
-                                        <div id="is_admini" class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="config_isAdmini1" value="true"/>
-                                                是
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="config_isAdmini2" value="fasle" checked/>
-                                                否
-                                            </label>
-                                        </div>
-                                    </td>
+}
+@layout.master("用户管理")(pagejs) {
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-9 col-md-10 col-md-offset-1 main">
+                <h2 class="sub-header">Section title</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>密码</th>
+                                <th>是否管理员</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" id="user_name"/></td>
+                                <td><input type="text" id="password"/></td>
+                                <td>
+                                    <div id="is_admini" class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadios" id="config_isAdmini1" value="true"/>
+                                            是
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="optionsRadios" id="config_isAdmini2" value="fasle" checked/>
+                                            否
+                                        </label>
+                                    </div>
+                                </td>
 
-                                    <td><button type="button" id="add_user" class="btn btn-primary" onclick="add_user()">添加</button></td>
-                                </tr>
+                                <td><button type="button" id="add_user" class="btn btn-primary" onclick="add_user()">
+                                    添加</button></td>
+                            </tr>
 
-                            </tbody>
-                            <tbody>
-                            @for(user <- users) {
-                                <tr>
-                                    <td>@user.UserName</td>
-                                    <td>@user.Password</td>
-                                    <td>@user.IsAdmini</td>
-                                    <td>
-                                        <button type="button" id="del" class="btn btn-primary" onclick="del_user('@user.Id')">删除</button>
-                                        <button type="button" id="view" class="btn btn-primary" onclick="view_config('@user.Id')">查看配置</button>
-                                    </td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                        <tbody>
+                        @for(user <- users) {
+                            <tr>
+                                <td>@user.UserName</td>
+                                <td>@user.Password</td>
+                                <td>@user.IsAdmini</td>
+                                <td>
+                                    <button type="button" id="del" class="btn btn-primary" onclick="del_user('@user.Id')">删除</button>
+                                    <button type="button" id="view" class="btn btn-primary" onclick="view_config('@user.Id')">查看配置</button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
+}
 
-            <!-- Bootstrap core JavaScript
-    ================================================== -->
-            <!-- Placed at the end of the document so the pages load faster -->
-        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
-        <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")"></script>
-        <script src="@routes.Assets.versioned("javascripts/docs.min.js")"></script>
-    </body>
-</html>

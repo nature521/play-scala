@@ -1,3 +1,4 @@
+@(title: String)(pagejs: Html)(content: Html)
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -8,13 +9,12 @@
         <meta name="author" content="">
         <link rel="icon" href="favicon.ico">
 
-        <title>客票信息</title>
+        <title>@title</title>
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
         <link href="@routes.Assets.versioned("stylesheets/bootstrap-theme.min.css")" rel="stylesheet">
         <link href="@routes.Assets.versioned("stylesheets/theme.css")" rel="stylesheet">
-
-        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
+            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+            <!--[if lt IE 9]>
         <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
@@ -26,17 +26,22 @@
             <div class="container">
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li ><a href="/user">用户管理</a></li>
+                        <li><a href="/user">用户管理</a></li>
                         <li><a href="/configself">用户配置</a></li>
-                        <li class="active"><a href="work.html">数据导入提取并导出</a></li>
+                        <li><a href="#">数据导入提取并导出</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
         <div class="container theme-showcase" role="main">
+            @content
             <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
             <script src="@routes.Assets.versioned("javascripts/bootstrap.min.js")"></script>
+            @pagejs
+            <script>
+                $('#navbar li a[href="'+window.location.pathname+'"]').parent().addClass('active');
+            </script>
         </div>
     </body>
 </html>
