@@ -25,6 +25,8 @@ DELETE  /config/del/:configId        controllers.ConfigController.delConfig(conf
 POST    /api/login                  controllers.ApiController.login
 GET     /api/test                   controllers.ApiController.test
 
+#数据导入模块
+POST    /upload                     controllers.DetrController.upload
 
 
 
