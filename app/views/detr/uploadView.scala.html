@@ -1,0 +1,15 @@
+@pagejs = {
+
+}
+@layout.master("配置管理")(pagejs) {
+    <!-- upload form start -->
+    @helper.form(action = routes.DetrController.upload, 'enctype -> "multipart/form-data") {
+
+        <input type="file" name="excel">
+
+        <p>
+            <input type="submit">
+        </p>
+    }
+    <!-- upload form end -->
+}

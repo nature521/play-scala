@@ -8,7 +8,9 @@ scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   jdbc,
-  "com.typesafe.play" %% "anorm" % "2.5.0"
+  "com.typesafe.play" %% "anorm" % "2.5.0",
+  "org.apache.poi" % "poi" % "3.8",
+  "org.apache.poi" % "poi-ooxml" % "3.8"
 )
 libraryDependencies += cache
 libraryDependencies += ws

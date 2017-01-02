@@ -1,6 +1,6 @@
 package controllers
 
-import java.io.File
+import java.io._
 import java.nio.file.attribute.PosixFilePermission._
 import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.{Files, Path}
@@ -10,6 +10,7 @@ import javax.inject._
 import akka.stream.IOResult
 import akka.stream.scaladsl._
 import akka.util.ByteString
+import com.kunpeng.detr.ExcelDealer
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
@@ -40,8 +41,8 @@ class DetrController @Inject() (implicit val messagesApi: MessagesApi) extends C
   /**
    * Renders a start page.
    */
-  def index = Action { implicit request =>
-    Ok(views.html.menu(form))
+  def uploadView = Action { implicit request =>
+    Ok(views.html.detr.uploadView())
   }
 
   type FilePartHandler[A] = FileInfo => Accumulator[ByteString, FilePart[A]]
@@ -83,15 +84,24 @@ class DetrController @Inject() (implicit val messagesApi: MessagesApi) extends C
    *
    * @return
    */
-  def upload = Action(parse.multipartFormData(handleFilePartAsFile)) { implicit request =>
-    val fileOption = request.body.file("name").map {
-      case FilePart(key, filename, contentType, file) =>
-        //logger.info(s"key = ${key}, filename = ${filename}, contentType = ${contentType}, file = $file")
-        val data = operateOnTempFile(file)
-        data
-    }
+  def upload = Action(parse.multipartFormData) { request =>
+    request.body.file("excel").map { excel =>
+      import java.io.File
+      val filename = excel.filename
+      val contentType = excel.contentType
+      val file = new File(s"/tmp/excel/$filename")
+      excel.ref.moveTo(file)
+      println("file upload ok")
 
-    Ok(s"file size = ${fileOption.getOrElse("no file")}")
+      // excel deal logical
+      val byteArray = ExcelDealer.ExcelDeal(new FileInputStream(file))
+
+      Ok(byteArray).as("application/vnd.ms-excel").withHeaders(("Content-disposition", "attachment; filename=export.xls"))
+    }.getOrElse {
+      println("file upload error")
+      Redirect(routes.DetrController.uploadView()).flashing(
+        "error" -> "Missing file")
+    }
   }
 
 }
