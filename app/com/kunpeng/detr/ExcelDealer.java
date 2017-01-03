@@ -5,10 +5,12 @@ import com.kunpeng.detr.EtermClient.EtermClient;
 import com.kunpeng.detr.EtermClient.EtermClientUtils;
 import com.kunpeng.detr.EtermClient.PendingResult;
 import com.kunpeng.detr.entity.DetrResult;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.Now;
+import org.apache.poi.ss.usermodel.Cell;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,7 @@ public class ExcelDealer {
         int lastRowNum = sheet.getLastRowNum();
         String airCode = "0.0";
         Long ticketNum;
+        setHead(sheet);
         for(int i = 1; i <= lastRowNum; i++){
             HSSFRow row = sheet.getRow(i);
             airCode = Double.toString(row.getCell(0).getNumericCellValue());
@@ -57,9 +60,22 @@ public class ExcelDealer {
             row.createCell(6).setCellValue(detrResult.departureDate);
             row.createCell(7).setCellValue(detrResult.airRange);
             row.createCell(8).setCellValue(detrResult.ticketPrice);
+            row.createCell(9).setCellValue(new DateTime(detrResult.departureDate2).toString("yyyy-MM-dd"));
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         workbook.write(out);
         return out.toByteArray();
     }
+    public static void setHead(HSSFSheet sheet){
+        HSSFRow row = sheet.getRow(0);
+        row.createCell(2).setCellValue("航空公司");
+        row.createCell(3).setCellValue("航班号");
+        row.createCell(4).setCellValue("舱位");
+        row.createCell(5).setCellValue("机票状态");
+        row.createCell(6).setCellValue("乘机日期");
+        row.createCell(7).setCellValue("航程");
+        row.createCell(8).setCellValue("票面价");
+        row.createCell(9).setCellValue("乘机日期2");
+    }
+
 }

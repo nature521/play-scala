@@ -3,6 +3,7 @@ package com.kunpeng.detr.EtermClient;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.kunpeng.detr.Utils.DateUtil;
 import com.kunpeng.detr.entity.DetrResult;
 
 import java.io.*;
@@ -14,31 +15,19 @@ import java.util.Properties;
  */
 public class DetrResultParser {
     private static String JAVA_SEPERATOR = "\n";
+
     public static List<String> Regulation(String src) {
-
-        //1.将\r\n空格替换成\r\n\r
-        //这个里边出现比较整齐，先不替换；
-        //String temp = src.replace("\r\n ", "\r\n\r");
-        String temp = src.replace("\t", "");
-
-        //2.对报文进行\r\n\r分割
-        List<String> lines = Splitter.on(JAVA_SEPERATOR).trimResults().splitToList(temp);
-        //List<String> lines = temp.split(SEPERATOR, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-        //3.去掉**开头的提示, 去掉<>及之后的元素
+        //1.对报文进行\r\n\r分割
+        List<String> lines = Splitter.on(JAVA_SEPERATOR).trimResults().splitToList(src);
         List<String> regularList = Lists.newArrayList();
-
         for (String line : lines) {
-            //3.1 过滤掉以**开头的
+            //2.去掉没用的信息；
             if(line.contains("ISSUED") || line.contains("E/R") || line.contains("TOUR CODE") || line.contains("PASSENGER")
                     || line.contains("EXCH") || line.contains("TAX") || line.contains("TOTAL")){
                 continue;
             }
-            //3.2找到左括号的位置
-            int index = line.indexOf('<');
             regularList.add(line);
         }
-
         return regularList;
     }
 
@@ -63,14 +52,14 @@ public class DetrResultParser {
                 detrResult.ticketNum = Long.valueOf(reg.substring(11,21));
             }else if(reg.startsWith("O FM")){
                 goAirCompany  = reg.substring(10,12);
-                goFlightNum = reg.substring(16,20);
+                goFlightNum = goAirCompany + reg.substring(16,20);
                 goCanin = reg.substring(22,23);
                 goDepartureDate = reg.substring(24,29);
                 goStatus = reg.substring(63);
                 goDeaprtureCity = reg.substring(6,9);
             }else if(reg.startsWith("O TO")){
                 returnAirCompany = reg.substring(10,12);
-                returnFlightNum = reg.substring(16,20);
+                returnFlightNum = returnAirCompany + reg.substring(16,20);
                 returnCabin = reg.substring(22,23);
                 returnDepartureDate = reg.substring(24,29);
                 returnStatus = reg.substring(63);
@@ -98,6 +87,9 @@ public class DetrResultParser {
         if(!returnDepartureDate.equals("")){
             detrResult.departureDate = goDepartureDate + "//"  + returnDepartureDate;
         }
+        //departureDate2只写第一段乘机日期；
+        detrResult.departureDate2 = DateUtil.DateCovCh(goDepartureDate);
+
         detrResult.ticketStatus = goStatus;
         if(!returnStatus.equals("")){
             detrResult.ticketStatus = goStatus + "//" + returnStatus;
