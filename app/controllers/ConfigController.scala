@@ -31,9 +31,6 @@ class ConfigController @Inject() (configService: ConfigService)extends Controlle
       configService.insert(Config(None,userId, configPost, configPort, configName, configPassword))
       Ok("insertOk")
   }
-
-
-
   def listConfig(userId : Long) = Action { implicit request =>
     val configsList : List[(Config)] = configService.list(userId).toList
     println(userId)
