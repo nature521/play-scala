@@ -1,8 +1,8 @@
 @pagejs = {
-    <script type="text/javascript"></script>
+
 }
 @layout.master("数据导入提取导出")(pagejs) {
-    @helper.form(action = routes.Assets.versioned("DetrContrlooer.upload"), 'enctype -> "multipart/form-data") {
+    @helper.form(action = routes.DetrController.upload, 'enctype -> "multipart/form-data") {
 
         <input type="file" name="picture">
 

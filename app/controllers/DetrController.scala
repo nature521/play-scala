@@ -89,7 +89,8 @@ class DetrController @Inject() (implicit val messagesApi: MessagesApi) extends C
       import java.io.File
       val filename = excel.filename
       val contentType = excel.contentType
-      val file = new File(s"/tmp/excel/$filename")
+      //val file = new File(s"/tmp/excel/$filename")
+      val file = new File("F://" + filename);
       excel.ref.moveTo(file)
       println("file upload ok")
 
