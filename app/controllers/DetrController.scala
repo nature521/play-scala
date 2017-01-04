@@ -11,6 +11,11 @@ import akka.stream.IOResult
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import com.kunpeng.detr.ExcelDealer
+import com.kunpeng.detr.entity.DetrResultJV
+import com.kunpeng.detr.entity.DetrResultJV
+import com.kunpeng.detr.model.ByteAndDetr
+import models.{DetrResult, DetrResultService}
+
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
@@ -20,6 +25,7 @@ import play.api.mvc.MultipartFormData.FilePart
 import play.api.mvc._
 import play.core.parsers.Multipart.FileInfo
 
+import scala.collection.JavaConversions
 import scala.concurrent.Future
 
 case class FormData(name: String)
@@ -28,7 +34,7 @@ case class FormData(name: String)
  * This controller handles a file upload.
  */
 @Singleton
-class DetrController @Inject() (implicit val messagesApi: MessagesApi) extends Controller {
+class DetrController @Inject()(detrService : DetrResultService) (implicit val messagesApi: MessagesApi) extends Controller {
 
   //private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
 
@@ -90,13 +96,16 @@ class DetrController @Inject() (implicit val messagesApi: MessagesApi) extends C
       val filename = excel.filename
       val contentType = excel.contentType
       //val file = new File(s"/tmp/excel/$filename")
+      val userId = request.session.get("UserId").get;
       val file = new File("F://" + filename);
       excel.ref.moveTo(file)
       println("file upload ok")
 
       // excel deal logical
-      val byteArray = ExcelDealer.ExcelDeal(new FileInputStream(file))
-
+      val byteAndDetrList : ByteAndDetr =  ExcelDealer.ExcelDeal(new FileInputStream(file));
+      val byteArray  = byteAndDetrList.getBytes;
+      val detrResultList : List[DetrResultJV] = JavaConversions.asScalaBuffer(byteAndDetrList.getDetrResultList).toList;
+      insertDetrResult(detrResultList)
       Ok(byteArray).as("application/vnd.ms-excel").withHeaders(("Content-disposition", "attachment; filename=export.xls"))
     }.getOrElse {
       println("file upload error")
@@ -105,5 +114,16 @@ class DetrController @Inject() (implicit val messagesApi: MessagesApi) extends C
     }
   }
 
+  private def insertDetrResult(detrResultList : List[DetrResultJV]){
+    val length : Int = detrResultList.size
+    for(i <- 0 to length - 1){
+      detrService.insert(DetrResult(detrResultList(i).ticketNum, detrResultList(i).ticketStatus,
+        detrResultList(i).airCompany, detrResultList(i).flightNum, detrResultList(i).cabin,
+        detrResultList(i).departureDate, detrResultList(i).ticketPrice,
+        detrResultList(i).airRange, detrResultList(i).keyCount , detrResultList(i).useStatus,
+        detrResultList(i).airCode, detrResultList(i).departureDate2, detrResultList(i).createTime,
+        detrResultList(i).remark))
+    }
+  }
 }
 

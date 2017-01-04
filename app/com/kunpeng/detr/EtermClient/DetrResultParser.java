@@ -4,11 +4,9 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.kunpeng.detr.Utils.DateUtil;
-import com.kunpeng.detr.entity.DetrResult;
+import com.kunpeng.detr.entity.DetrResultJV;
 
-import java.io.*;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Created by Administrator on 2016/4/14.
@@ -31,8 +29,8 @@ public class DetrResultParser {
         return regularList;
     }
 
-    public static DetrResult parse(List<String> regList){
-        DetrResult detrResult = new DetrResult();
+    public static DetrResultJV parse(List<String> regList){
+        DetrResultJV detrResult = new DetrResultJV();
         String goAirCompany = "";
         String returnAirCompany = "";
         String goFlightNum = "";
@@ -64,13 +62,19 @@ public class DetrResultParser {
                 returnDepartureDate = reg.substring(24,29);
                 returnStatus = reg.substring(63);
                 goArriveCity = reg.substring(6,9);
-            }else if(reg.startsWith("FARE")){
+            }else if(reg.startsWith("FARE") ){
                 int indexEnd = reg.indexOf("|");
-                detrResult.ticketPrice = Integer.valueOf(reg.substring(20, indexEnd - 3).trim());
+                if(reg.substring(20, indexEnd - 3).trim().equals("")){
+                    detrResult.ticketPrice = 0;
+                }else{
+                    detrResult.ticketPrice = Integer.valueOf(reg.substring(20, indexEnd - 3).trim());
+                }
+
             }else if(reg.startsWith("TO")){
                 returnArriveCity = reg.substring(4,7);
             }
         }
+
         detrResult.airCompany = goAirCompany;
         if(!returnAirCompany.equals("") && (!goAirCompany.equals(returnAirCompany))){
             detrResult.airCompany = goAirCompany + "//" + returnAirCompany;
@@ -87,22 +91,23 @@ public class DetrResultParser {
         if(!returnDepartureDate.equals("")){
             detrResult.departureDate = goDepartureDate + "//"  + returnDepartureDate;
         }
+
         //departureDate2只写第一段乘机日期；
+        Boolean isAfertNow = true;
         detrResult.departureDate2 = DateUtil.DateCovCh(goDepartureDate);
 
         detrResult.ticketStatus = goStatus;
         if(!returnStatus.equals("")){
             detrResult.ticketStatus = goStatus + "//" + returnStatus;
         }
+
+
         if(Strings.isNullOrEmpty(goArriveCity))
         {
             detrResult.airRange = goDeaprtureCity + "-" + returnArriveCity;
         }else{
             detrResult.airRange = goDeaprtureCity + "-" + goArriveCity + "//" + goArriveCity  + "-" + returnArriveCity;
         }
-
         return detrResult;
     }
-
-
 }

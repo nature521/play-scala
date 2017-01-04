@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by Administrator on 2016/12/29.
  */
-public class DetrResult {
+public class DetrResultJV {
     public Long id;
     public Long ticketNum;
     public String ticketStatus;
