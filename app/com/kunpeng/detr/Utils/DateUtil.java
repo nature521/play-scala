@@ -35,7 +35,9 @@ public class DateUtil {
         return MonthMap;
 
     }
-    public static Date DateCovCh(String date)
+
+    //o8JAN, 是否在今日之前，
+    public static Date DateCovCh(String date, Boolean isBeforeNow)
     {
         // 08JAN 转成 2017-01-08 00:00:00.00
         //Date CandDate = DateTime.now().toDate();
@@ -47,10 +49,12 @@ public class DateUtil {
         DateTime now = DateTime.now();
         int year = now.getYear();
 
-        DateTime returnDate = DateTime.parse(year + "-" + monthNum + "-" + day);
-        if(returnDate.isBeforeNow())
-            returnDate.plusYears(1);
-        return returnDate.toDate();
-
+        DateTime departureDate = DateTime.parse(year + "-" + monthNum + "-" + day);
+        if(isBeforeNow && departureDate.isAfterNow()){
+            departureDate = departureDate.minusYears(1);
+        }else if(!isBeforeNow && departureDate.isBeforeNow()){
+            departureDate = departureDate.plusYears(1);
+        }
+        return departureDate.toDate();
     }
 }

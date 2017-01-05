@@ -93,15 +93,13 @@ public class DetrResultParser {
         }
 
         //departureDate2只写第一段乘机日期；
-        Boolean isAfertNow = true;
-        detrResult.departureDate2 = DateUtil.DateCovCh(goDepartureDate);
-
+        //Boolean isBeforeNow = true;
+        Boolean isBeforeNow = isBeforeNow(goStatus);
+        detrResult.departureDate2 = DateUtil.DateCovCh(goDepartureDate, isBeforeNow);
         detrResult.ticketStatus = goStatus;
         if(!returnStatus.equals("")){
             detrResult.ticketStatus = goStatus + "//" + returnStatus;
         }
-
-
         if(Strings.isNullOrEmpty(goArriveCity))
         {
             detrResult.airRange = goDeaprtureCity + "-" + returnArriveCity;
@@ -109,5 +107,16 @@ public class DetrResultParser {
             detrResult.airRange = goDeaprtureCity + "-" + goArriveCity + "//" + goArriveCity  + "-" + returnArriveCity;
         }
         return detrResult;
+    }
+    //已经用过的说明比现在早；
+    public static Boolean isBeforeNow(String goStatus){
+
+        if(goStatus.contains("USED/FLOWN")){
+            return true;
+        }else if(goStatus.contains("OPEN FOR USE")){
+            return false;
+        }
+        return false;
+
     }
 }
