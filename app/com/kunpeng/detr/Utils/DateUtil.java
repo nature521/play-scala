@@ -36,7 +36,7 @@ public class DateUtil {
 
     }
 
-    //o8JAN, 是否在今日之前，
+    //o8JAN, 是否在今日之前(票是否已经用过)
     public static Date DateCovCh(String date, Boolean isBeforeNow)
     {
         // 08JAN 转成 2017-01-08 00:00:00.00
