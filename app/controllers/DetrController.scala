@@ -90,9 +90,11 @@ class DetrController @Inject()(detrService : DetrResultService) (implicit val me
    *
    * @return
    */
-  def upload = Action(parse.multipartFormData) { request =>
+  def upload = Action(parse.multipartFormData) {implicit request =>
+
+    var config : String = request.body.asFormUrlEncoded.get("config").get(0)
     request.body.file("excel").map { excel =>
-      import java.io.File
+    import java.io.File
       val filename = excel.filename
       val contentType = excel.contentType
       //val file = new File(s"/tmp/excel/$filename")
@@ -102,7 +104,7 @@ class DetrController @Inject()(detrService : DetrResultService) (implicit val me
       println("file upload ok")
 
       // excel deal logical
-      val byteAndDetrList : ByteAndDetr =  ExcelDealer.ExcelDeal(new FileInputStream(file));
+      val byteAndDetrList : ByteAndDetr =  ExcelDealer.ExcelDeal(new FileInputStream(file),config);
       val byteArray  = byteAndDetrList.getBytes;
       val detrResultList : List[DetrResultJV] = JavaConversions.asScalaBuffer(byteAndDetrList.getDetrResultList).toList;
       insertDetrResult(detrResultList)

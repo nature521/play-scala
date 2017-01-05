@@ -12,12 +12,17 @@ import java.util.List;
  * Created by Administrator on 2016/4/14.
  */
 public class DetrResultParser {
-    private static String JAVA_SEPERATOR = "\n";
 
+    private static String JAVA_SEPERATOR = "\n";
     public static List<String> Regulation(String src) {
         //1.对报文进行\r\n\r分割
         List<String> lines = Splitter.on(JAVA_SEPERATOR).trimResults().splitToList(src);
         List<String> regularList = Lists.newArrayList();
+        if(src.contains("ENSURE XMIT MODE IS VAR AND USE REF: TO REFRESH SCREEN")
+           || src.contains("ET PASSENGER DATA NOT FOUND")
+           || src.contains("ET TICKET NUMBER IS NOT EXIST")){
+            return regularList;
+        }
         for (String line : lines) {
             //2.去掉没用的信息；
             if(line.contains("ISSUED") || line.contains("E/R") || line.contains("TOUR CODE") || line.contains("PASSENGER")
@@ -30,6 +35,10 @@ public class DetrResultParser {
     }
 
     public static DetrResultJV parse(List<String> regList){
+
+        if(regList.isEmpty()){
+            return null;
+        }
         DetrResultJV detrResult = new DetrResultJV();
         String goAirCompany = "";
         String returnAirCompany = "";

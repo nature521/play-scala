@@ -1,11 +1,28 @@
 @pagejs = {
-
+    <script type="text/javascript">
+        $(function(){
+            $('#config_list').change(function(){
+                var config = $("#config_list").val()
+                $('#set_config').val(config);
+            });
+        });
+    </script>
 }
 @layout.master("配置管理")(pagejs) {
+    <p>
+        <label>配置选择</label>
+    <select name="config" id="config_list">
+        <option value="116.213.132.7:350:detr:www2730826">116.213.132.7:350:detr:www2730826</option>
+        <option value="114.242.126.44:350:single1:2730826">114.242.126.44:350:single1:2730826</option>
+    </select>
+    </p>
+
     <!-- upload form start -->
     @helper.form(action = routes.DetrController.upload, 'enctype -> "multipart/form-data") {
-
-        <input type="file" name="excel">
+        <input id="set_config" type="hidden" name="config" value="116.213.132.7:350:detr:www2730826">
+        <p>
+            <input type="file" name="excel">
+        </p>
 
         <p>
             <input type="submit">
