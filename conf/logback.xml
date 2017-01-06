@@ -2,13 +2,36 @@
 <configuration>
 
   <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
-
-  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>${application.home:-.}/logs/application.log</file>
+  <!--控制台输出 -->
+  <appender name="stdout" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  </appender>>
+  <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>
+        logs/log.%d{yyyy-MM-dd}.log
+      </FileNamePattern>
+      <!--日志保存30天 -->
+      <MaxHistory>30</MaxHistory>
+    </rollingPolicy>
     <encoder>
-      <pattern>%date [%level] from %logger in %thread - %message%n%xException</pattern>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread]  %-5level from %logger in - %message%n</pattern>
     </encoder>
   </appender>
+  <!--错误 -->
+ <!--
+ <appender name="file-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+   <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+     <FileNamePattern>
+       logs/error.%d{yyyy-MM-dd}.log
+       <MaxHistory>30</MaxHistory>
+     </FileNamePattern>
+   </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{80} - %msg%n</pattern>
+    </encoder>
+
+  </appender>
+  -->
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -32,10 +55,17 @@
   <logger name="com.avaje.ebeaninternal.server.core.XmlConfigLoader" level="OFF" />
   <logger name="com.avaje.ebeaninternal.server.lib.BackgroundThread" level="OFF" />
   <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
+  <logger name="com.kunpeng.detr" additivity="true">
+    <level value="Info"/>
+    <appender-ref ref="file"/>
+  </logger>
 
-  <root level="WARN">
-    <appender-ref ref="ASYNCFILE" />
-    <appender-ref ref="ASYNCSTDOUT" />
+
+  <root level="Info">
+    <appender-ref ref="file" />
+    <appender-ref ref="file-str"/>
+    <!--<appender-ref ref="file—error" />-->
+    <!--<appender-ref ref="ASYNCSTDOUT" />-->
   </root>
 
 </configuration>

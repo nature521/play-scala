@@ -21,15 +21,6 @@ class DetrResultService @Inject()(dbapi: DBApi) {
 
   private val db = dbapi.database("default")
 
-  val simple = {
-    get[Option[Long]]("Id") ~
-      get[String]("UserName") ~
-      get[String]("Password") ~
-      get[Boolean]("IsAdmini") map {
-      case id~userName~password~isAdmini => User(id, userName, password, isAdmini)
-    }
-  }
-
   def insert(detrResult: DetrResult) = {
     db.withConnection{ implicit  connection =>
       SQL(

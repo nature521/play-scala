@@ -51,6 +51,12 @@ public class ExcelDealer {
             sendCmd  = "detr" + " " + "TN" + airCode.substring(0,airCode.length() - 2) + "-" + ticketNum;
             try {
                 socketResult = etermClient.SendRawCmd(sendCmd);
+                //有时候网络不好，需要重发，
+                int count = 1;
+                while(socketResult == null || socketResult.equals("欢迎使用哈尔滨中心软件ETerm业务系统")){
+                    socketResult = etermClient.SendRawCmd(sendCmd);
+                    LOGGER.info("重发次数：{}", count ++);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

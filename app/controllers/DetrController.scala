@@ -14,7 +14,7 @@ import com.kunpeng.detr.ExcelDealer
 import com.kunpeng.detr.entity.DetrResultJV
 import com.kunpeng.detr.entity.DetrResultJV
 import com.kunpeng.detr.model.ByteAndDetr
-import models.{DetrResult, DetrResultService}
+import models.{Config, ConfigService, DetrResult, DetrResultService}
 
 import play.api._
 import play.api.data.Form
@@ -26,7 +26,9 @@ import play.api.mvc._
 import play.core.parsers.Multipart.FileInfo
 
 import scala.collection.JavaConversions
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
+import play.api.Logger
 
 case class FormData(name: String)
 
@@ -34,8 +36,8 @@ case class FormData(name: String)
  * This controller handles a file upload.
  */
 @Singleton
-class DetrController @Inject()(detrService : DetrResultService) (implicit val messagesApi: MessagesApi) extends Controller {
-
+class DetrController @Inject()(detrService : DetrResultService)(configService : ConfigService) (implicit val messagesApi: MessagesApi) extends Controller {
+val logger = Logger(this.getClass())
   //private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
 
   val form = Form(
@@ -47,10 +49,23 @@ class DetrController @Inject()(detrService : DetrResultService) (implicit val me
   /**
    * Renders a start page.
    */
+
   def uploadView = Action { implicit request =>
-    Ok(views.html.detr.uploadView())
+    val userId : Long = request.session.get("UserId").get.toLong
+    val configList : List[Config] = configService.list(userId)
+    val configStrList : List[String] = getEtermCongfig(configList)
+    Ok(views.html.detr.uploadView(configStrList))
   }
 
+  def getEtermCongfig(configList:List[Config]) : List[String] = {
+    val length = configList.length
+    var configBuffer: ListBuffer[String] = new ListBuffer[String]
+    for (i <- 0 to length - 1) {
+      var configStr: String = configList(i).ConfigPost + ":" + configList(i).ConfigPort + ":" + configList(i).ConfigName + ":" + configList(i).ConfigPassword
+      configBuffer.append(configStr)
+    }
+    configBuffer.toList
+  }
   type FilePartHandler[A] = FileInfo => Accumulator[ByteString, FilePart[A]]
 
   /**
@@ -102,7 +117,7 @@ class DetrController @Inject()(detrService : DetrResultService) (implicit val me
       val file = new File("F://" + filename);
       excel.ref.moveTo(file)
       println("file upload ok")
-
+      logger.info("file upload ok:" + filename)
       // excel deal logical
       val byteAndDetrList : ByteAndDetr =  ExcelDealer.ExcelDeal(new FileInputStream(file),config);
       val byteArray  = byteAndDetrList.getBytes;
@@ -116,6 +131,8 @@ class DetrController @Inject()(detrService : DetrResultService) (implicit val me
     }
   }
 
+
+
   private def insertDetrResult(detrResultList : List[DetrResultJV]){
     val length : Int = detrResultList.size
     for(i <- 0 to length - 1){
@@ -127,5 +144,7 @@ class DetrController @Inject()(detrService : DetrResultService) (implicit val me
         detrResultList(i).remark))
     }
   }
+
+
 }
 

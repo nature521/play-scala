@@ -1,3 +1,4 @@
+@(configList : List[String])
 @pagejs = {
     <script type="text/javascript">
         $(function(){
@@ -12,8 +13,11 @@
     <p>
         <label>配置选择</label>
     <select name="config" id="config_list">
-        <option value="116.213.132.7:350:detr:www2730826">116.213.132.7:350:detr:www2730826</option>
-        <option value="114.242.126.44:350:single1:2730826">114.242.126.44:350:single1:2730826</option>
+        @for(config <- configList){
+            <option value=@config>
+                @config
+            </option>
+        }
     </select>
     </p>
 

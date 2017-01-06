@@ -43,7 +43,7 @@ class ConfigService @Inject()(dbapi: DBApi, userService: UserService) {
 
   def insert(config : Config) = {
     db.withConnection { implicit connection =>
-      SQL("insert into EtermConfig values ( {userid},{configpost},{configport},{configname},{configpassword})"
+      SQL("insert into Config values ( {userid},{configpost},{configport},{configname},{configpassword})"
       ).on(
         'userid -> config.UserId,
         'configpost -> config.ConfigPost,
@@ -62,11 +62,11 @@ class ConfigService @Inject()(dbapi: DBApi, userService: UserService) {
       val result = SQL(
         """
           select
-          c.id [EtermConfig.Id], c.UserId [EtermConfig.UserId],
-          c.ConfigPost [EtermConfig.ConfigPost],c.ConfigPort [EtermConfig.ConfigPort],
-          c.ConfigName [EtermConfig.ConfigName],c.ConfigPassword [EtermConfig.ConfigPassword],
+          c.id [Config.Id], c.UserId [Config.UserId],
+          c.ConfigPost [Config.ConfigPost],c.ConfigPort [Config.ConfigPort],
+          c.ConfigName [Config.ConfigName],c.ConfigPassword [Config.ConfigPassword],
           u.UserName [User.UserName], u.Password [User.Password], u.IsAdmini [User.IsAdmini]
-          from EtermConfig as c join UserManage as u on c.UserId = u.Id
+          from Config as c join UserManage as u on c.UserId = u.Id
       """
       ).as(userWithConfigSim *)
       result
@@ -77,7 +77,7 @@ class ConfigService @Inject()(dbapi: DBApi, userService: UserService) {
   def list(userId : Long)= {
     db.withConnection{ implicit connection =>
       val result = SQL(
-      "select * from EtermConfig where UserId = {UserId}"
+      "select * from Config where UserId = {UserId}"
       ).on(
         'UserId -> userId
       ).as(simple *)
@@ -85,11 +85,13 @@ class ConfigService @Inject()(dbapi: DBApi, userService: UserService) {
     }
   }
 
+
+
   //删除配置，那只能根据每个配置的id删除；
   def del(id : Long) = {
     db.withConnection{ implicit connection =>
       SQL(
-      "delete from EtermConfig where Id = {id}"
+      "delete from Config where Id = {id}"
       ).on(
       'id -> id
       ).executeUpdate()

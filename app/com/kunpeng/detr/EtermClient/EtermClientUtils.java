@@ -22,6 +22,7 @@ public class EtermClientUtils {
         String userName = properties.getProperty("userName");
         String password = properties.getProperty("password");*/
         EtermClient etermClient = new EtermClient(config.getPost(), config.getPort(), config.getUserName(), config.getPassword());
+
         return etermClient;
     }
 }

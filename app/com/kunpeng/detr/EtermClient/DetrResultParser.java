@@ -6,15 +6,19 @@ import com.google.common.collect.Lists;
 import com.kunpeng.detr.Utils.DateUtil;
 import com.kunpeng.detr.entity.DetrResultJV;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/4/14.
  */
 public class DetrResultParser {
-
+    private static Logger LOGGER = LoggerFactory.getLogger(DetrResultParser.class);
     private static String JAVA_SEPERATOR = "\n";
     public static List<String> Regulation(String src) {
+        LOGGER.info("报文：{}", src);
         //1.对报文进行\r\n\r分割
         List<String> lines = Splitter.on(JAVA_SEPERATOR).trimResults().splitToList(src);
         List<String> regularList = Lists.newArrayList();
