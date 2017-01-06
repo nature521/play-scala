@@ -26,8 +26,14 @@
                 url:'/api/login',
                 type:'POST',
                 data:{"username": userName,"password" : password},
-                success:function(){
-                        window.location = ('/detr/upload')
+                success:function(isAdmin){
+                        if(isAdmin == "true"){
+                            window.location = ('/detr/upload')
+                        }else{
+                            window.location = ('/ordinaryuser/detr/upload')
+                        }
+
+
                 },
                 error:function(){
                     alert("等陆失败，用户名不存在或密码不正确！")

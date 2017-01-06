@@ -18,14 +18,16 @@ class ApiController  @Inject() (userService: UserService, configService: ConfigS
     //var json = request.body.asJson
     //var userName = (json / "userName").get
     val users : List[User] = userService.findUser(userName, password)
+
     if(users.nonEmpty){
-      Ok("Welcome~").withSession(
+      Ok(users.head.IsAdmini.toString).withSession(
         request.session +  ("Username" -> users.head.UserName) + ("UserId" -> users.head.Id.get.toString)
       )
     }else{
       Status(500)
     }
   }
+
 
   def test = Action {request =>
     //userService.insert(User("aaa", "bbb"))

@@ -27,5 +27,7 @@ GET     /api/test                   controllers.ApiController.test
 # DETR
 GET     /detr/upload                controllers.DetrController.uploadView
 
+GET     /ordinaryuser/detr/upload   controllers.DetrController.ordinaryUserUploadView
+
 # 数据导入模块
 POST    /upload                     controllers.DetrController.upload

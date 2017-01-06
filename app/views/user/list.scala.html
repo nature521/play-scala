@@ -37,18 +37,16 @@
                 }
             });
         }
-
         function view_config(userId){
             location.href = "config/" + userId
         }
-
         </script>
 }
 @layout.master("用户管理")(pagejs) {
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-9 col-md-10 col-md-offset-1 main">
-                <h2 class="sub-header">Section title</h2>
+                <h3 class="sub-header">用户列表</h3>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>

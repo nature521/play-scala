@@ -57,6 +57,13 @@ val logger = Logger(this.getClass())
     Ok(views.html.detr.uploadView(configStrList))
   }
 
+  def ordinaryUserUploadView = Action { implicit request =>
+    val userId : Long = request.session.get("UserId").get.toLong
+    val configList : List[Config] = configService.list(userId)
+    val configStrList : List[String] = getEtermCongfig(configList)
+    Ok(views.html.detr.ordinaryUserUploadView(configStrList))
+  }
+
   def getEtermCongfig(configList:List[Config]) : List[String] = {
     val length = configList.length
     var configBuffer: ListBuffer[String] = new ListBuffer[String]
