@@ -52,9 +52,15 @@ val logger = Logger(this.getClass())
 
   def uploadView = Action { implicit request =>
     val userId : Long = request.session.get("UserId").get.toLong
+    val isAdmini : String = request.session.get("IsAdmin").get
     val configList : List[Config] = configService.list(userId)
     val configStrList : List[String] = getEtermCongfig(configList)
-    Ok(views.html.detr.uploadView(configStrList))
+    if(isAdmini.equals("true")){
+      Ok(views.html.detr.uploadView(configStrList))
+    }else{
+      Ok(views.html.detr.ordinaryUserUploadView(configStrList))
+    }
+
   }
 
   def ordinaryUserUploadView = Action { implicit request =>
@@ -121,7 +127,7 @@ val logger = Logger(this.getClass())
       val contentType = excel.contentType
       //val file = new File(s"/tmp/excel/$filename")
       val userId = request.session.get("UserId").get;
-      val file = new File("F://" + filename);
+      val file = new File(filename);
       excel.ref.moveTo(file)
       println("file upload ok")
       logger.info("file upload ok:" + filename)

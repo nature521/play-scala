@@ -15,13 +15,16 @@ class ApiController  @Inject() (userService: UserService, configService: ConfigS
   def login = Action {request =>
     var userName : String = request.body.asFormUrlEncoded.get("username").head
     var password : String = request.body.asFormUrlEncoded.get("password").head
+
     //var json = request.body.asJson
     //var userName = (json / "userName").get
     val users : List[User] = userService.findUser(userName, password)
-
+    //用户名，id,是否管理员存入session；
     if(users.nonEmpty){
       Ok(users.head.IsAdmini.toString).withSession(
-        request.session +  ("Username" -> users.head.UserName) + ("UserId" -> users.head.Id.get.toString)
+        request.session +  ("Username" -> users.head.UserName)
+                        + ("UserId" -> users.head.Id.get.toString)
+                        + ("IsAdmin" -> users.head.IsAdmini.toString)
       )
     }else{
       Status(500)

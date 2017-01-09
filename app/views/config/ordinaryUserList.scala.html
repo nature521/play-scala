@@ -1,0 +1,81 @@
+@(configList : List[(Config)])
+@pagejs = {
+    <script type="text/javascript">
+        function add_config(){
+            $.ajax({
+                url : '/config/add',
+                type : 'POST',
+                data :{
+                    "configPost" : $('#config_post').val(),
+                    "configPort" : $('#config_port').val(),
+                    "configName" : $('#config_name').val(),
+                    "configPassword" : $('#config_password').val()
+                },
+                success: function(){
+                    alert("插入成功！");
+                    location.reload()
+                },
+                error:function(error){
+                    alert("插入失败！")
+                }
+            });
+        }
+
+        function del_config(configId){
+            $.ajax({
+                url : '/config/del/' + configId,
+                type : 'DELETE',
+                success: function(){
+                    alert("删除成功");
+                    location.reload()
+                },
+                error: function(){
+                    alert("删除失败")
+                }
+            });
+        }
+        </script>
+}
+@layout.masterOrdinaryUser("配置管理")(pagejs) {
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-9 col-md-10 col-md-offset-1 main">
+                <h3 class="sub-header">配置列表</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>服务器地址</th>
+                                <th>端口号</th>
+                                <th>配置用户名</th>
+                                <th>配置密码</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" id="config_post"/></td>
+                                <td><input type="text" id="config_port"/></td>
+                                <td><input type="text" id="config_name"/></td>
+                                <td><input type="text" id="config_password"/></td>
+                                <td><button type="button" id="add_config"  class="btn btn-primary"  onclick="add_config()">添加</button></td>
+                            </tr>
+
+                        </tbody>
+                        <tbody>
+                        @for(config <- configList){
+                            <tr>
+                                <td>@config.ConfigPost</td>
+                                <td>@config.ConfigPort</td>
+                                <td>@config.ConfigName</td>
+                                <td>@config.ConfigPassword</td>
+                                <td><button type="button" id="del" class="btn btn-primary" onclick="del_config('@config.Id')">删除</button></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}

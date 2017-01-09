@@ -4,8 +4,8 @@
   <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
   <!--控制台输出 -->
   <appender name="stdout" class="ch.qos.logback.core.rolling.RollingFileAppender">
-  </appender>>
-  <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  </appender>
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <FileNamePattern>
         logs/log.%d{yyyy-MM-dd}.log
@@ -57,14 +57,15 @@
   <logger name="com.gargoylesoftware.htmlunit.javascript" level="OFF" />
   <logger name="com.kunpeng.detr" additivity="true">
     <level value="Info"/>
-    <appender-ref ref="file"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="ASYNCFILE"/>
   </logger>
 
 
   <root level="Info">
-    <appender-ref ref="file" />
-    <appender-ref ref="file-str"/>
-    <!--<appender-ref ref="file—error" />-->
+    <appender-ref ref="FILE" />sbt
+    <appender-ref ref="ASYNCFILE"/>
+      <!--<appender-ref ref="file—error" />-->
     <!--<appender-ref ref="ASYNCSTDOUT" />-->
   </root>
 

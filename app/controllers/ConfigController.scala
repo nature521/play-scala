@@ -41,8 +41,15 @@ class ConfigController @Inject() (configService: ConfigService)extends Controlle
     val userId : Long = request.session.get("UserId").get.toLong
     println(userId)
     val configsList : List[(Config)] = configService.list(userId).toList
-    Ok(views.html.config.list.render(configsList))
+    val isAdmini : String = request.session.get("IsAdmin").get
+    if(isAdmini.equals("true")){
+      Ok(views.html.config.list.render(configsList))
+    }else{
+      Ok(views.html.config.ordinaryUserList.render(configsList))
+    }
+
   }
+
 
   def delConfig(id : Long) = Action { implicit request =>
     configService.del(id)
