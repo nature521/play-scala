@@ -148,14 +148,17 @@ val logger = Logger(this.getClass())
 
   private def insertDetrResult(detrResultList : List[DetrResultJV]){
     val length : Int = detrResultList.size
-    for(i <- 0 to length - 1){
-      detrService.insert(DetrResult(detrResultList(i).ticketNum, detrResultList(i).ticketStatus,
-        detrResultList(i).airCompany, detrResultList(i).flightNum, detrResultList(i).cabin,
-        detrResultList(i).departureDate, detrResultList(i).ticketPrice,
-        detrResultList(i).airRange, detrResultList(i).keyCount , detrResultList(i).useStatus,
-        detrResultList(i).airCode, detrResultList(i).departureDate2, detrResultList(i).createTime,
-        detrResultList(i).remark))
+    if(length > 0){
+      for(i <- 0 to length - 1){
+        detrService.insert(DetrResult(detrResultList(i).ticketNum, detrResultList(i).ticketStatus,
+          detrResultList(i).airCompany, detrResultList(i).flightNum, detrResultList(i).cabin,
+          detrResultList(i).departureDate, detrResultList(i).ticketPrice,
+          detrResultList(i).airRange, detrResultList(i).keyCount , detrResultList(i).useStatus,
+          detrResultList(i).airCode, detrResultList(i).departureDate2, detrResultList(i).createTime,
+          detrResultList(i).remark))
+      }
     }
+
   }
 
 

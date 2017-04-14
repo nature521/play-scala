@@ -63,6 +63,90 @@ public class DetrResultParser {
                 detrResult.ticketNum = Long.valueOf(reg.substring(11,21));
             }else if(reg.startsWith("O FM")){
                 goAirCompany  = reg.substring(10,12);
+                //goFlightNum = goAirCompany + reg.substring(16,20);
+                goCanin = reg.substring(22,23);
+               // goDepartureDate = reg.substring(24,29);
+                goStatus = reg.substring(67);
+                goDeaprtureCity = reg.substring(6,9);
+            }else if(reg.startsWith("O TO")){
+                returnAirCompany = reg.substring(10,12);
+                returnFlightNum = returnAirCompany + reg.substring(16,20);
+                returnCabin = reg.substring(22,23);
+                //returnDepartureDate = reg.substring(24,29);
+                returnStatus = reg.substring(67);
+                goArriveCity = reg.substring(6,9);
+            }else if(reg.startsWith("FARE") ){
+                int indexEnd = reg.indexOf("|");
+                if(reg.substring(20, indexEnd - 3).trim().equals("")){
+                    detrResult.ticketPrice = 0;
+                }else{
+                    detrResult.ticketPrice = Integer.valueOf(reg.substring(20, indexEnd - 3).trim());
+                }
+
+            }else if(reg.startsWith("TO")){
+                returnArriveCity = reg.substring(4,7);
+            }
+        }
+
+        detrResult.airCompany = goAirCompany;
+        if(!returnAirCompany.equals("") && (!goAirCompany.equals(returnAirCompany))){
+            detrResult.airCompany = goAirCompany + "//" + returnAirCompany;
+        }
+        detrResult.flightNum = goFlightNum;
+        if(!returnFlightNum.equals("")){
+            //detrResult.flightNum = goFlightNum + "//" + returnFlightNum;
+        }
+        detrResult.cabin = goCanin;
+        if(!returnCabin.equals("")){
+            detrResult.cabin = goCanin + "//" + returnCabin;
+        }
+        detrResult.departureDate = goDepartureDate;
+        if(!returnDepartureDate.equals("")){
+           // detrResult.departureDate = goDepartureDate + "//"  + returnDepartureDate;
+        }
+
+        //departureDate2只写第一段乘机日期；
+        //Boolean isBeforeNow = true;
+        Boolean isBeforeNow = isBeforeNow(goStatus);
+        //detrResult.departureDate2 = DateUtil.DateCovCh(goDepartureDate, isBeforeNow);
+        detrResult.ticketStatus = goStatus;
+        if(!returnStatus.equals("")){
+            detrResult.ticketStatus = goStatus + "//" + returnStatus;
+        }
+        if(Strings.isNullOrEmpty(goArriveCity))
+        {
+            detrResult.airRange = goDeaprtureCity + "-" + returnArriveCity;
+        }else{
+            detrResult.airRange = goDeaprtureCity + "-" + goArriveCity + "//" + goArriveCity  + "-" + returnArriveCity;
+        }
+        return detrResult;
+    }
+
+    /*public static DetrResultJV parse(List<String> regList){
+
+        if(regList.isEmpty()){
+            return null;
+        }
+        DetrResultJV detrResult = new DetrResultJV();
+        String goAirCompany = "";
+        String returnAirCompany = "";
+        String goFlightNum = "";
+        String returnFlightNum = "";
+        String goCanin = "";
+        String returnCabin = "";
+        String goDepartureDate = "";
+        String returnDepartureDate = "";
+        String goStatus = "";
+        String returnStatus = "";
+        String goDeaprtureCity = "";
+        String goArriveCity = "";
+        String returnArriveCity = "";
+        for(String reg : regList){
+            if(reg.startsWith("DETR")){
+                detrResult.airCode = reg.substring(7,10);
+                detrResult.ticketNum = Long.valueOf(reg.substring(11,21));
+            }else if(reg.startsWith("O FM")){
+                goAirCompany  = reg.substring(10,12);
                 goFlightNum = goAirCompany + reg.substring(16,20);
                 goCanin = reg.substring(22,23);
                 goDepartureDate = reg.substring(24,29);
@@ -120,7 +204,8 @@ public class DetrResultParser {
             detrResult.airRange = goDeaprtureCity + "-" + goArriveCity + "//" + goArriveCity  + "-" + returnArriveCity;
         }
         return detrResult;
-    }
+    }*/
+
     //已经用过的说明比现在早；
     public static Boolean isBeforeNow(String goStatus){
 
