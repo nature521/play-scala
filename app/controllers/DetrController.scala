@@ -126,15 +126,15 @@ val logger = Logger(this.getClass())
       val filename = excel.filename
       val contentType = excel.contentType
       //val file = new File(s"/tmp/excel/$filename")
-      val userId = request.session.get("UserId").get;
-      val file = new File(filename);
-      excel.ref.moveTo(file)
+      val userId = request.session.get("UserId").get
+      val file = new File(filename)
+      excel.ref.moveTo(file, replace = true)
       println("file upload ok")
       logger.info("file upload ok:" + filename)
       // excel deal logical
-      val byteAndDetrList : ByteAndDetr =  ExcelDealer.ExcelDeal(new FileInputStream(file),config);
-      val byteArray  = byteAndDetrList.getBytes;
-      val detrResultList : List[DetrResultJV] = JavaConversions.asScalaBuffer(byteAndDetrList.getDetrResultList).toList;
+      val byteAndDetrList : ByteAndDetr =  ExcelDealer.ExcelDeal(new FileInputStream(file),config)
+      val byteArray  = byteAndDetrList.getBytes
+      val detrResultList : List[DetrResultJV] = JavaConversions.asScalaBuffer(byteAndDetrList.getDetrResultList).toList
       insertDetrResult(detrResultList)
       Ok(byteArray).as("application/vnd.ms-excel").withHeaders(("Content-disposition", "attachment; filename=export.xls"))
     }.getOrElse {

@@ -46,9 +46,15 @@ public class ExcelDealer {
         setHead(sheet);
         for(int i = 1; i <= lastRowNum; i++){
             HSSFRow row = sheet.getRow(i);
+            if(row.getCell(0) == null || row.getCell(1) == null
+                    || row.getCell(0).toString().trim().isEmpty() || row.getCell(1).toString().trim().isEmpty()){
+                continue;
+            }
             airCode = Double.toString(row.getCell(0).getNumericCellValue());
+
             ticketNum = Math.round(row.getCell(1).getNumericCellValue());
-            sendCmd  = "detr" + " " + "TN" + airCode.substring(0,airCode.length() - 2) + "-" + ticketNum;
+
+            sendCmd  = "detr" + " " + "TN" + " "+ airCode.substring(0,airCode.length() - 2) + "-" + ticketNum;
             try {
                 socketResult = etermClient.SendRawCmd(sendCmd);
                 //有时候网络不好，需要重发，
@@ -63,7 +69,7 @@ public class ExcelDealer {
             List<String> regulationList = DetrResultParser.Regulation(socketResult);
             //结果；
             DetrResultJV detrResult = DetrResultParser.parse(regulationList);
-            if(detrResult == null){
+            if(detrResult == null ||detrResult.airCode == null || detrResult.ticketNum == null){
                 continue;
             }
             detrResult.createTime = DateTime.now().toDate();
@@ -81,6 +87,7 @@ public class ExcelDealer {
         workbook.write(out);
         byteAndDetr.setBytes(out.toByteArray());
         byteAndDetr.setDetrResultList(detrResultList);
+        etermClient = null;
         return byteAndDetr;
     }
 

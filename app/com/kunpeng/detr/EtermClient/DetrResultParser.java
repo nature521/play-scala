@@ -23,7 +23,7 @@ public class DetrResultParser {
         List<String> lines = Splitter.on(JAVA_SEPERATOR).trimResults().splitToList(src);
         List<String> regularList = Lists.newArrayList();
         if(src.contains("ENSURE XMIT MODE IS VAR AND USE REF: TO REFRESH SCREEN")
-           || src.contains("ET PASSENGER DATA NOT FOUND")
+           || src.contains("ET PASSENGER DATA NOT FOUND") || src.contains("指令未授")
            || src.contains("ET TICKET NUMBER IS NOT EXIST")){
             return regularList;
         }

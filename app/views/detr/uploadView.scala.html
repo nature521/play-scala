@@ -6,6 +6,8 @@
                 var config = $("#config_list").val()
                 $('#set_config').val(config);
             });
+
+            $('#uploadForm').attr("action","/upload?" + Math.random())
         });
     </script>
 }
@@ -22,7 +24,7 @@
     </p>
 
     <!-- upload form start -->
-    @helper.form(action = routes.DetrController.upload, 'enctype -> "multipart/form-data") {
+    @helper.form(action = routes.DetrController.upload, 'enctype -> "multipart/form-data", 'id -> "uploadForm") {
         <input id="set_config" type="hidden" name="config" value="116.213.132.7:350:detr:www2730826">
         <p>
             <input type="file" name="excel">
